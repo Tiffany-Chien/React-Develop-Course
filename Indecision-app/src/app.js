@@ -5,45 +5,51 @@ console.log("App is running");
 const app = {
   title: "Indecision App",
   subtitle: "This is the subtitle",
-  options: ["One", "Two"],
-};
-const template = (
-  <div>
-    <h1>{app.title}</h1>
-    {app.subtitle && <p>{app.subtitle}</p>}
-    {app.options.length > 0 ? "Here are your options" : "No options"}
-    <ol>
-      <li>Item one</li>
-      <li>Item two</li>
-    </ol>
-  </div>
-);
-
-let count = 0;
-const addOne = () => {
-  console.log("addOne");
+  options: [],
 };
 
-const minusOne = () => {
-  console.log("minusOne");
+const onFormSubmit = (e) => {
+  e.preventDefault(); // Stop full page refresh
+  // get the option we just inputted
+  const option = e.target.elements.option.value;
+  if (option) {
+    app.options.push(option);
+    // wipe the input
+    e.target.elements.option.value = "";
+  }
+  // each time submit we want to rerender
+  render();
 };
 
-const reset = () => {
-  console.log("reset");
+const removeAllOptions = () => {
+  app.options = [];
+  render();
 };
 
-const templateTwo = (
-  <div>
-    <h1>Count: {count}</h1>
-    {/* Attributes, class is called className in JSX */}
-    <button onClick={addOne}>+1</button>
-    <button onClick={minusOne}>-1</button>
-    <button onClick={reset}>reset</button>
-  </div>
-);
+const render = () => {
+  const template = (
+    <div>
+      <h1>{app.title}</h1>
+      {app.subtitle && <p>{app.subtitle}</p>}
+      <p>{app.options.length > 0 ? "Here are your options" : "No options"}</p>
+      <p>{app.options.length}</p>
+      <button onClick={removeAllOptions}>Remove all</button>
+      <ol>
+        <li>Item one</li>
+        <li>Item two</li>
+      </ol>
+      {/* We only want to reference the function variable not to call the funtion
+      If we typed "onFormSubmit()" then onSubmit will focus on the return value in the event handler
+      in this case it's undefined*/}
+      <form onSubmit={onFormSubmit}>
+        <input type="text" name="option" />
+        <button>Add Option</button>
+      </form>
+    </div>
+  );
 
-console.log(templateTwo);
+  const appRoot = document.getElementById("app");
+  ReactDOM.render(template, appRoot);
+};
 
-const appRoot = document.getElementById("app");
-
-ReactDOM.render(templateTwo, appRoot);
+render();
