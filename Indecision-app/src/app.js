@@ -1,65 +1,79 @@
-console.log("App is running");
+// React enforces the upper case letter
+class IndecisionApp extends React.Component {
+  render() {
+    const title = "Indecision";
+    const subtitle = "Put your life in the hands of computer";
+    const options = ["Thing one", "Thing two", "Thing four"];
 
-// adjacent JSX element must be wrapped in an enclosing tag
-// can only have a single root element -> wrap with div
-const app = {
-  title: "Indecision App",
-  subtitle: "This is the subtitle",
-  options: [],
-};
-
-const onFormSubmit = (e) => {
-  e.preventDefault(); // Stop full page refresh
-  // get the option we just inputted
-  const option = e.target.elements.option.value;
-  if (option) {
-    app.options.push(option);
-    // wipe the input
-    e.target.elements.option.value = "";
+    return (
+      <div>
+        <Header title={title} subtitle={subtitle} />
+        <Action />
+        <Options options={options} />
+        <AddOption />
+      </div>
+    );
   }
-  // each time submit we want to rerender
-  render();
-};
+}
 
-const removeAllOptions = () => {
-  app.options = [];
-  render();
-};
+class Header extends React.Component {
+  // React components has to have a render()
+  render() {
+    // 'this' is the reference to the current component
+    // 'this.props' -> object key value pair
+    // console.log(this.props);
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <h2>{this.props.subtitle}</h2>
+      </div>
+    );
+  }
+}
 
-const onMakeDecision = () => {
-  // randomly select all of the number of our options
-  const randomNum = Math.floor(Math.random() * app.options.length);
-  const option = app.options[randomNum];
-  alert(option);
-};
+class Action extends React.Component {
+  render() {
+    return (
+      <div>
+        <button>What should I do</button>
+      </div>
+    );
+  }
+}
 
-const render = () => {
-  const template = (
-    <div>
-      <h1>{app.title}</h1>
-      {app.subtitle && <p>{app.subtitle}</p>}
-      <p>{app.options.length > 0 ? "Here are your options" : "No options"}</p>
-      <button disabled={app.options.length === 0} onClick={onMakeDecision}>
-        What should I do?
-      </button>
-      <button onClick={removeAllOptions}>Remove all</button>
-      <ol>
-        {app.options.map((option) => {
-          return <li key={option}>{option}</li>;
-        })}
-      </ol>
-      {/* We only want to reference the function variable not to call the funtion
-      If we typed "onFormSubmit()" then onSubmit will focus on the return value in the event handler
-      in this case it's undefined*/}
-      <form onSubmit={onFormSubmit}>
-        <input type="text" name="option" />
-        <button>Add Option</button>
-      </form>
-    </div>
-  );
+class Options extends React.Component {
+  render() {
+    return (
+      <div>
+        {/* Render the options array length */}
+        This is the length of the options array: {this.props.options.length}
+        {/* Render a new p tag to each options */}
+        {/* key is not going to pass down below to <Option /> because key is a reserved name */}
+        {/* So we have to pass down another option prop */}
+        {this.props.options.map((option) => (
+          <Option key={option} optionText={option} />
+        ))}
+        <Option />
+      </div>
+    );
+  }
+}
 
-  const appRoot = document.getElementById("app");
-  ReactDOM.render(template, appRoot);
-};
+class Option extends React.Component {
+  render() {
+    return <div>{this.props.optionText}</div>;
+  }
+}
 
-render();
+class AddOption extends React.Component {
+  render() {
+    return (
+      <div>
+        <p>Add option components here</p>
+      </div>
+    );
+  }
+}
+
+// ReactDOM is going to render <IndecisionApp />
+ReactDOM.render(<IndecisionApp />, document.getElementById("app"));
